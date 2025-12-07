@@ -84,8 +84,15 @@ export function EditUserDialog({ user, open, onClose }: EditUserDialogProps) {
   const onSubmit = (data: UpdateUserFormValues) => {
     if (!user.id) return;
 
+    // Transform data to match UpdateUserRequest type
+    const updateData = {
+      ...data,
+      address: data.address || "",
+      district_id: data.district_id || "",
+    };
+
     updateUser.mutate(
-      { id: user.id, data },
+      { id: user.id, data: updateData },
       {
         onSuccess: () => {
           onClose();
@@ -191,8 +198,8 @@ export function EditUserDialog({ user, open, onClose }: EditUserDialogProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {districtsData?.data?.map((district) => (
-                          <SelectItem key={district.id} value={district.id}>
+                        {districtsData?.data?.filter(district => district.id).map((district) => (
+                          <SelectItem key={district.id!} value={district.id!}>
                             {district.name}
                           </SelectItem>
                         ))}

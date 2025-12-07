@@ -165,8 +165,8 @@ export function AddMarketDialog() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {districtsData?.data?.map((district) => (
-                        <SelectItem key={district.id} value={district.id}>
+                      {districtsData?.data?.filter(district => district.id).map((district) => (
+                        <SelectItem key={district.id!} value={district.id!}>
                           {district.name}
                         </SelectItem>
                       ))}

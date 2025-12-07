@@ -177,7 +177,7 @@ export default function HouseholdExpendituresPage() {
                           aria-expanded={itemSearchOpen}
                           className="w-full justify-between"
                         >
-                          {selectedItem ? selectedItem.name : "All items"}
+                          {selectedItem ? selectedItem.item : "All items"}
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -213,7 +213,7 @@ export default function HouseholdExpendituresPage() {
                               {itemsData?.data?.map((item) => (
                                 <CommandItem
                                   key={item.id}
-                                  value={item.name}
+                                  value={item.item}
                                   onSelect={() => {
                                     setTempFilters({
                                       ...tempFilters,
@@ -230,7 +230,7 @@ export default function HouseholdExpendituresPage() {
                                         : "opacity-0"
                                     )}
                                   />
-                                  {item.name}
+                                  {item.item}
                                 </CommandItem>
                               ))}
                             </CommandGroup>
@@ -316,7 +316,7 @@ export default function HouseholdExpendituresPage() {
                       <SelectContent>
                         <SelectItem value="all">All districts</SelectItem>
                         {districtsData?.data?.map((district) => (
-                          <SelectItem key={district.id} value={district.id}>
+                          <SelectItem key={district.id || district.name} value={district.id || ""}>
                             {district.name}
                           </SelectItem>
                         ))}

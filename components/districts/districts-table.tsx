@@ -45,7 +45,7 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
     if (selectedRows.size === districts.length) {
       setSelectedRows(new Set());
     } else {
-      setSelectedRows(new Set(districts.map((d) => d.id)));
+      setSelectedRows(new Set(districts.map((d) => d.id).filter((id): id is string => id !== undefined)));
     }
   };
 
@@ -81,12 +81,12 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {districts.map((district) => (
+          {districts.filter(district => district.id).map((district) => (
             <TableRow key={district.id}>
               <TableCell className="pl-6">
                 <Checkbox
-                  checked={selectedRows.has(district.id)}
-                  onCheckedChange={() => toggleRow(district.id)}
+                  checked={selectedRows.has(district.id!)}
+                  onCheckedChange={() => toggleRow(district.id!)}
                   aria-label={`Select ${district.name}`}
                 />
               </TableCell>

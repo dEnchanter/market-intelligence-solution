@@ -183,8 +183,8 @@ export function AddHouseholdDialog() {
                           Loading districts...
                         </SelectItem>
                       ) : (
-                        districtsData?.data?.map((district) => (
-                          <SelectItem key={district.id} value={district.id}>
+                        districtsData?.data?.filter(district => district.id).map((district) => (
+                          <SelectItem key={district.id!} value={district.id!}>
                             {district.name}
                           </SelectItem>
                         ))

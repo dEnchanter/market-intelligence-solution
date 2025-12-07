@@ -139,6 +139,12 @@ export function UpdateDistrictDialog({
   const onSubmit = (data: DistrictFormValues) => {
     if (!selectedState || !lgasData?.data) return;
 
+    // Ensure district has an ID for update
+    if (!district.id) {
+      console.error("Cannot update district without ID");
+      return;
+    }
+
     // Build State object
     const stateObj = {
       id: selectedState.id,
@@ -164,7 +170,7 @@ export function UpdateDistrictDialog({
           name: data.name,
           state: stateObj,
           lga: lgaArray,
-          added_by: district.added_by,
+          added_by: district.added_by || { id: "", name: "Unknown" },
         },
       },
       {

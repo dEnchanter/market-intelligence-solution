@@ -46,7 +46,7 @@ export function UsersTable({ users }: UsersTableProps) {
     if (selectedRows.size === users.length) {
       setSelectedRows(new Set());
     } else {
-      setSelectedRows(new Set(users.map((u) => u.id)));
+      setSelectedRows(new Set(users.map((u) => u.id).filter((id): id is string => id !== undefined)));
     }
   };
 
@@ -81,12 +81,12 @@ export function UsersTable({ users }: UsersTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
+            {users.filter(user => user.id).map((user) => (
+              <TableRow key={user.id!}>
                 <TableCell className="pl-6">
                   <Checkbox
-                    checked={selectedRows.has(user.id)}
-                    onCheckedChange={() => toggleRow(user.id)}
+                    checked={selectedRows.has(user.id!)}
+                    onCheckedChange={() => toggleRow(user.id!)}
                     aria-label={`Select ${user.name}`}
                   />
                 </TableCell>
