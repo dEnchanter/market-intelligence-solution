@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest add button input label)",
+      "Bash(npx shadcn@latest add avatar dropdown-menu)",
+      "Bash(taskkill:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(move:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
