@@ -58,13 +58,8 @@ export function HouseholdItemsTable({ items }: HouseholdItemsTableProps) {
                 aria-label="Select all"
               />
             </TableHead>
-            <TableHead className="px-4">Item</TableHead>
-            <TableHead className="px-4">Description</TableHead>
             <TableHead className="px-4">Group</TableHead>
-            <TableHead className="px-4">Class</TableHead>
-            <TableHead className="px-4">Subclass</TableHead>
-            <TableHead className="px-4">Durability</TableHead>
-            <TableHead className="px-4">Unit of Measure</TableHead>
+            <TableHead className="px-4">Item</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -77,37 +72,12 @@ export function HouseholdItemsTable({ items }: HouseholdItemsTableProps) {
                   aria-label={`Select ${item.item}`}
                 />
               </TableCell>
-              <TableCell className="font-medium px-4">{item.item}</TableCell>
-              <TableCell className="px-4 text-sm text-gray-600">
-                {item.description}
-              </TableCell>
               <TableCell className="px-4">
                 <Badge className="bg-purple-100 text-purple-900 hover:bg-purple-100 border-0">
                   {item.group}
                 </Badge>
               </TableCell>
-              <TableCell className="px-4">
-                <Badge className="bg-blue-100 text-blue-900 hover:bg-blue-100 border-0">
-                  {item.class}
-                </Badge>
-              </TableCell>
-              <TableCell className="px-4">
-                <Badge className="bg-green-100 text-green-900 hover:bg-green-100 border-0">
-                  {item.subclass}
-                </Badge>
-              </TableCell>
-              <TableCell className="px-4">
-                <Badge
-                  className={
-                    item.durability === "Durable"
-                      ? "bg-indigo-100 text-indigo-900 hover:bg-indigo-100 border-0"
-                      : "bg-orange-100 text-orange-900 hover:bg-orange-100 border-0"
-                  }
-                >
-                  {item.durability}
-                </Badge>
-              </TableCell>
-              <TableCell className="px-4 text-sm">{item.unit_of_measure}</TableCell>
+              <TableCell className="font-medium px-4">{item.item}</TableCell>
             </TableRow>
           ))}
         </TableBody>

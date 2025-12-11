@@ -1,6 +1,6 @@
 // Market household report filters
 export interface MarketHouseholdReportFilters {
-  added_by_id: string;
+  added_by_id?: string;
   month?: number;
   year?: number;
 }

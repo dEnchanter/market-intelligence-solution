@@ -6,7 +6,9 @@
       "Bash(npx shadcn@latest add avatar dropdown-menu)",
       "Bash(taskkill:*)",
       "Bash(npx shadcn@latest add:*)",
-      "Bash(move:*)"
+      "Bash(move:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

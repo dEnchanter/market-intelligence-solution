@@ -1,12 +1,7 @@
 export interface HouseholdItem {
   id: string;
-  item: string;
-  description: string;
   group: string;
-  class: string;
-  subclass: string;
-  durability: string;
-  unit_of_measure: string;
+  item: string;
   created_at: string;
   updated_at: string;
 }

@@ -1,4 +1,4 @@
-import { API_CONFIG, getApiUrl } from "./config";
+import { API_CONFIG, getApiUrl, getAuthHeaders } from "./config";
 import {
   MarketHouseholdReportFilters,
   MyMarketHouseholdReportFilters,
@@ -14,7 +14,10 @@ export const reportingApi = {
     try {
       // Build query string from filters
       const queryParams = new URLSearchParams();
-      queryParams.append("added_by_id", filters.added_by_id);
+
+      if (filters.added_by_id) {
+        queryParams.append("added_by_id", filters.added_by_id);
+      }
 
       if (filters.month !== undefined) {
         queryParams.append("month", filters.month.toString());
@@ -24,13 +27,13 @@ export const reportingApi = {
         queryParams.append("year", filters.year.toString());
       }
 
-      const url = `${getApiUrl(API_CONFIG.ENDPOINTS.REPORTING.MARKET_HOUSEHOLD)}?${queryParams.toString()}`;
+      const url = `${getApiUrl(API_CONFIG.ENDPOINTS.REPORTING.MARKET_HOUSEHOLD)}${
+        queryParams.toString() ? `?${queryParams.toString()}` : ""
+      }`;
 
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
       });
 
       const data = await response.json();
@@ -74,9 +77,7 @@ export const reportingApi = {
 
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
       });
 
       const data = await response.json();

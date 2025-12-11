@@ -44,7 +44,7 @@ export default function HouseholdItemsPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h3 className="text-sm font-medium text-gray-600">
                 Total Items
@@ -58,22 +58,6 @@ export default function HouseholdItemsPage() {
               <p className="mt-2 text-3xl font-bold text-[#013370]">
                 {data?.data
                   ? new Set(data.data.map((item) => item.group)).size
-                  : 0}
-              </p>
-            </div>
-            <div className="rounded-lg border bg-white p-6 shadow-sm">
-              <h3 className="text-sm font-medium text-gray-600">Classes</h3>
-              <p className="mt-2 text-3xl font-bold text-[#013370]">
-                {data?.data
-                  ? new Set(data.data.map((item) => item.class)).size
-                  : 0}
-              </p>
-            </div>
-            <div className="rounded-lg border bg-white p-6 shadow-sm">
-              <h3 className="text-sm font-medium text-gray-600">Subclasses</h3>
-              <p className="mt-2 text-3xl font-bold text-[#013370]">
-                {data?.data
-                  ? new Set(data.data.map((item) => item.subclass)).size
                   : 0}
               </p>
             </div>

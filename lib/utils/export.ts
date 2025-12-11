@@ -279,26 +279,16 @@ export function convertHouseholdItemsToCSV(items: HouseholdItem[]): string {
 
   // CSV Headers
   const headers = [
-    "Item",
-    "Description",
     "Group",
-    "Class",
-    "Subclass",
-    "Durability",
-    "Unit of Measure",
+    "Item",
     "Created At",
     "Updated At",
   ];
 
   // CSV Rows
   const rows = items.map((item) => [
-    item.item,
-    item.description,
     item.group,
-    item.class,
-    item.subclass,
-    item.durability,
-    item.unit_of_measure,
+    item.item,
     new Date(item.created_at).toLocaleString(),
     new Date(item.updated_at).toLocaleString(),
   ]);
