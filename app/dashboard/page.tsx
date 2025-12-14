@@ -3,8 +3,8 @@
 import { AppLayout } from "@/components/app-layout";
 import { MaxWidthWrapper } from "@/components/utils/max-width-wrapper";
 import { useStatsSummary } from "@/hooks/use-stats";
-import { useDistricts } from "@/hooks/use-districts";
-import { useMarketHouseholdReport, useMyMarketHouseholdReport } from "@/hooks/use-reporting";
+import { useUsers } from "@/hooks/use-users";
+import { useMarketHouseholdReport } from "@/hooks/use-reporting";
 import { Loader2, Building2, Store, List, Home, Users, Package, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,14 +14,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useStatsSummary();
-  const { data: districtsData, isLoading: districtsLoading } = useDistricts();
+  const { data: usersData, isLoading: usersLoading } = useUsers();
 
-  // Reporting endpoints
-  const { data: marketHouseholdData, isLoading: marketHouseholdLoading, error: marketHouseholdError } = useMarketHouseholdReport();
-  const { data: myMarketHouseholdData, isLoading: myMarketHouseholdLoading, error: myMarketHouseholdError } = useMyMarketHouseholdReport();
+  // Get current month and year
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11, so add 1
+  const currentYear = currentDate.getFullYear();
+
+  // Filter states - default to current month and year
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
+
+  // Reporting endpoints - only fetch when filters are applied
+  const { data: marketHouseholdData, isLoading: marketHouseholdLoading, error: marketHouseholdError } = useMarketHouseholdReport(
+    selectedUserId || undefined,
+    selectedMonth,
+    selectedYear
+  );
+
+  // Filter users to only show Field profile type
+  const fieldUsers = usersData?.data?.filter((user: any) => user.ProfileType === "Field") || [];
 
   return (
     <AppLayout>
@@ -150,28 +167,28 @@ export default function DashboardPage() {
 
               {/* Filters Section */}
               <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 md:gap-4 rounded-lg border bg-white p-3 md:p-4 shadow-sm">
-                <Select>
+                <Select value={selectedUserId} onValueChange={setSelectedUserId}>
                   <SelectTrigger className="w-full sm:w-[180px] md:w-[200px]">
-                    <SelectValue placeholder={districtsLoading ? "Loading districts..." : "Select District"} />
+                    <SelectValue placeholder={usersLoading ? "Loading users..." : "Select Field User"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {districtsLoading ? (
+                    {usersLoading ? (
                       <SelectItem value="loading" disabled>Loading...</SelectItem>
-                    ) : districtsData?.data && Array.isArray(districtsData.data) && districtsData.data.length > 0 ? (
-                      districtsData.data.map((district) => (
-                        <SelectItem key={district.id} value={district.id || ""}>
-                          {district.name}
+                    ) : fieldUsers && Array.isArray(fieldUsers) && fieldUsers.length > 0 ? (
+                      fieldUsers.map((user: any) => (
+                        <SelectItem key={user.id} value={user.id || ""}>
+                          {user.name}
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="no-data" disabled>No districts available</SelectItem>
+                      <SelectItem value="no-data" disabled>No field users available</SelectItem>
                     )}
                   </SelectContent>
                 </Select>
 
-                <Select>
+                <Select value={selectedMonth?.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
                   <SelectTrigger className="w-full sm:w-[140px] md:w-[150px]">
-                    <SelectValue placeholder="November" />
+                    <SelectValue placeholder="Select Month" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="1">January</SelectItem>
@@ -189,9 +206,9 @@ export default function DashboardPage() {
                   </SelectContent>
                 </Select>
 
-                <Select>
+                <Select value={selectedYear?.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
                   <SelectTrigger className="w-full sm:w-[110px] md:w-[120px]">
-                    <SelectValue placeholder="2025" />
+                    <SelectValue placeholder="Select Year" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="2025">2025</SelectItem>
@@ -199,9 +216,74 @@ export default function DashboardPage() {
                     <SelectItem value="2023">2023</SelectItem>
                   </SelectContent>
                 </Select>
-
-                <Button className="flex-1 sm:flex-initial bg-[#013370] hover:bg-[#012a5c]">Filter</Button>
               </div>
+
+              {/* Market Household Report Cards */}
+              {marketHouseholdLoading ? (
+                <div className="flex items-center justify-center rounded-lg border bg-white p-12">
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-8 w-8 animate-spin text-[#013370]" />
+                    <p className="text-sm text-gray-600">Loading report...</p>
+                  </div>
+                </div>
+              ) : marketHouseholdError ? (
+                <div className="rounded-lg border bg-white p-12 text-center">
+                  <p className="text-gray-600">Failed to load market household report</p>
+                </div>
+              ) : marketHouseholdData?.data && Array.isArray(marketHouseholdData.data) && marketHouseholdData.data.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {marketHouseholdData.data.map((item: any, index: number) => {
+                    const totalItems = (item.market?.total_item_added || 0) + (item.market?.total_item_not_added || 0);
+                    const totalHouseholds = (item.household?.total_household_added || 0) + (item.household?.total_household_not_added || 0);
+
+                    return (
+                      <div key={item.market?.market_id || index} className="rounded-lg border bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="space-y-3">
+                          {/* Location Header */}
+                          <div className="border-b pb-2">
+                            <h3 className="font-semibold text-[#013370]">
+                              {item.location?.town || 'N/A'} | {item.location?.lga || 'N/A'}
+                            </h3>
+                          </div>
+
+                          {/* Market Info */}
+                          <div className="space-y-2">
+                            <div>
+                              <p className="text-sm font-medium text-gray-700">Market Name</p>
+                              <p className="text-base font-semibold text-gray-900">{item.market?.name || 'N/A'}</p>
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                              <p className="text-sm text-gray-600">Items captured</p>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {item.market?.total_item_added || 0}/{totalItems}
+                              </p>
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                              <p className="text-sm text-gray-600">Total Price</p>
+                              <p className="text-sm font-semibold text-gray-900">
+                                ₦{(item.market?.total_cost_added || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </p>
+                            </div>
+
+                            <div className="flex justify-between items-center border-t pt-2">
+                              <p className="text-sm text-gray-600">Household</p>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {item.household?.total_household_added || 0}/{totalHouseholds}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-lg border bg-white p-12 text-center">
+                  <p className="text-gray-600">No report data available. Please select filters above.</p>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -8,7 +8,14 @@
       "Bash(npx shadcn@latest add:*)",
       "Bash(move:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git push:*)",
+      "Bash(git config:*)",
+      "Bash(git credential-manager-core:*)",
+      "Bash(cmdkey /list:*)",
+      "Bash(git credential:*)",
+      "Bash(cmd /c taskkill /PID 176420 /F)",
+      "Bash(powershell -Command \"Stop-Process -Id 176420 -Force\")"
     ],
     "deny": [],
     "ask": []
