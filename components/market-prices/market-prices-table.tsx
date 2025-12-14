@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MarketPrice } from "@/lib/types/market-prices";
 import {
   Table,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
 
 interface MarketPricesTableProps {
   prices: MarketPrice[];
@@ -19,6 +20,8 @@ interface MarketPricesTableProps {
 
 export function MarketPricesTable({ prices }: MarketPricesTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const toggleRow = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -61,6 +64,27 @@ export function MarketPricesTable({ prices }: MarketPricesTableProps) {
     return monthNames[month - 1] || month;
   };
 
+  // Calculate paginated data
+  const paginatedPrices = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return prices.slice(startIndex, endIndex);
+  }, [prices, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when prices change (e.g., after filtering)
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [prices.length]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
   if (!prices || prices.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-12 text-center">
@@ -90,7 +114,7 @@ export function MarketPricesTable({ prices }: MarketPricesTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {prices.map((price) => (
+          {paginatedPrices.map((price) => (
             <TableRow key={price.id}>
               <TableCell className="pl-6">
                 <Checkbox
@@ -135,6 +159,13 @@ export function MarketPricesTable({ prices }: MarketPricesTableProps) {
           ))}
         </TableBody>
       </Table>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={prices.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+      />
     </div>
   );
 }

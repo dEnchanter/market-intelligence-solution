@@ -5,7 +5,7 @@ import { MaxWidthWrapper } from "@/components/utils/max-width-wrapper";
 import { useStatsSummary } from "@/hooks/use-stats";
 import { useUsers } from "@/hooks/use-users";
 import { useMarketHouseholdReport } from "@/hooks/use-reporting";
-import { Loader2, Building2, Store, List, Home, Users, Package, ShoppingCart } from "lucide-react";
+import { Loader2, Building2, Store, List, Home, Users, Package, ShoppingCart, UserCircle, Inbox, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -227,9 +227,36 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ) : marketHouseholdError ? (
-                <div className="rounded-lg border bg-white p-12 text-center">
-                  <p className="text-gray-600">Failed to load market household report</p>
-                </div>
+                // Error state - check if it's because no user was selected
+                !selectedUserId ? (
+                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-12 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="rounded-full bg-blue-100 p-3">
+                        <UserCircle className="h-10 w-10 text-blue-600" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-base font-semibold text-blue-900">Select a Field User</p>
+                        <p className="text-sm text-blue-700">
+                          Please select a field user from the dropdown above to view the market household report.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-lg border border-red-200 bg-red-50 p-12 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="rounded-full bg-red-100 p-3">
+                        <AlertCircle className="h-10 w-10 text-red-600" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-base font-semibold text-red-900">Failed to Load Report</p>
+                        <p className="text-sm text-red-700">
+                          There was an error loading the market household report. Please try again or contact support if the issue persists.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
               ) : marketHouseholdData?.data && Array.isArray(marketHouseholdData.data) && marketHouseholdData.data.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {marketHouseholdData.data.map((item: any, index: number) => {
@@ -280,8 +307,19 @@ export default function DashboardPage() {
                   })}
                 </div>
               ) : (
-                <div className="rounded-lg border bg-white p-12 text-center">
-                  <p className="text-gray-600">No report data available. Please select filters above.</p>
+                // Empty state - data loaded successfully but array is empty
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="rounded-full bg-gray-100 p-3">
+                      <Inbox className="h-10 w-10 text-gray-400" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-base font-semibold text-gray-900">No Data Available</p>
+                      <p className="text-sm text-gray-600">
+                        No market household reports found for the selected filters. Try adjusting your selection.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </>

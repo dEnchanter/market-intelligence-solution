@@ -40,7 +40,7 @@ export default function MarketPricesPage() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
 
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [itemSearchOpen, setItemSearchOpen] = useState(false);
   const [filters, setFilters] = useState<MarketPriceListFilters>({});
   const [tempFilters, setTempFilters] = useState<MarketPriceListFilters>({});
@@ -177,8 +177,11 @@ export default function MarketPricesPage() {
                           variant="outline"
                           role="combobox"
                           className="w-full justify-between"
+                          title={selectedItem ? selectedItem.item : "All items"}
                         >
-                          {selectedItem ? selectedItem.item : "All items"}
+                          <span className="truncate">
+                            {selectedItem ? selectedItem.item : "All items"}
+                          </span>
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>

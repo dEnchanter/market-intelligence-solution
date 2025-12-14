@@ -15,7 +15,11 @@
       "Bash(cmdkey /list:*)",
       "Bash(git credential:*)",
       "Bash(cmd /c taskkill /PID 176420 /F)",
-      "Bash(powershell -Command \"Stop-Process -Id 176420 -Force\")"
+      "Bash(powershell -Command \"Stop-Process -Id 176420 -Force\")",
+      "Bash(echo:*)",
+      "Bash(for dir in markets districts users household-items)",
+      "Bash(do echo \"Processing $dir\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

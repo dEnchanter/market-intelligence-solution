@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
 import { User } from "@/lib/types/users";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +32,8 @@ export function UsersTable({ users }: UsersTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [editUser, setEditUser] = useState<User | null>(null);
   const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const toggleRow = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -48,6 +51,27 @@ export function UsersTable({ users }: UsersTableProps) {
     } else {
       setSelectedRows(new Set(users.map((u) => u.id).filter((id): id is string => id !== undefined)));
     }
+  };
+
+  // Calculate paginated data
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return users.slice(startIndex, endIndex);
+  }, [users, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when users change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [users.length]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
   };
 
   if (users.length === 0) {
@@ -81,7 +105,7 @@ export function UsersTable({ users }: UsersTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.filter(user => user.id).map((user) => (
+            {paginatedUsers.filter(user => user.id).map((user) => (
               <TableRow key={user.id!}>
                 <TableCell className="pl-6">
                   <Checkbox
@@ -136,6 +160,13 @@ export function UsersTable({ users }: UsersTableProps) {
             ))}
           </TableBody>
         </Table>
+        <Pagination
+          currentPage={currentPage}
+          totalItems={users.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+        />
       </div>
 
       {/* Dialogs */}

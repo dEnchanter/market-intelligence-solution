@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
 import { HouseholdExpenditure } from "@/lib/types/household-expenditures";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
 
 interface ExpendituresTableProps {
   expenditures: HouseholdExpenditure[];
@@ -19,6 +20,8 @@ interface ExpendituresTableProps {
 
 export function ExpendituresTable({ expenditures }: ExpendituresTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const toggleRow = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -56,6 +59,27 @@ export function ExpendituresTable({ expenditures }: ExpendituresTableProps) {
     return months[month - 1] || month;
   };
 
+  // Calculate paginated data
+  const paginatedExpenditures = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return expenditures.slice(startIndex, endIndex);
+  }, [expenditures, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when expenditures change (e.g., after filtering)
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [expenditures.length]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
   if (expenditures.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-8 text-center">
@@ -77,14 +101,14 @@ export function ExpendituresTable({ expenditures }: ExpendituresTableProps) {
               />
             </TableHead>
             <TableHead className="px-4">Household</TableHead>
-            <TableHead className="px-4">Item</TableHead>
+            <TableHead className="px-4 max-w-xs">Item</TableHead>
             <TableHead className="px-4">Amount</TableHead>
             <TableHead className="px-4">Period</TableHead>
             <TableHead className="px-4 pr-6">Location</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expenditures.map((expenditure) => {
+          {paginatedExpenditures.map((expenditure) => {
             return (
               <TableRow key={expenditure.id}>
                 <TableCell className="pl-6">
@@ -102,15 +126,15 @@ export function ExpendituresTable({ expenditures }: ExpendituresTableProps) {
                     </p>
                   )}
                 </TableCell>
-                <TableCell className="px-4">
+                <TableCell className="px-4 max-w-xs">
                   <Badge
                     variant="outline"
-                    className="font-normal border-[#013370]/30 text-[#013370] bg-[#013370]/5"
+                    className="font-normal border-[#013370]/30 text-[#013370] bg-[#013370]/5 whitespace-normal break-words inline-block"
                   >
                     {expenditure.item?.item || expenditure.item_id}
                   </Badge>
                   {expenditure.item?.group && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 mt-1 break-words">
                       {expenditure.item.group}
                     </p>
                   )}
@@ -137,6 +161,13 @@ export function ExpendituresTable({ expenditures }: ExpendituresTableProps) {
           })}
         </TableBody>
       </Table>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={expenditures.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+      />
     </div>
   );
 }

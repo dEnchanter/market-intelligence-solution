@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { HouseholdItem } from "@/lib/types/household-items";
 import {
   Table,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination } from "@/components/ui/pagination";
 
 interface HouseholdItemsTableProps {
   items: HouseholdItem[];
@@ -19,6 +20,8 @@ interface HouseholdItemsTableProps {
 
 export function HouseholdItemsTable({ items }: HouseholdItemsTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const toggleRow = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -36,6 +39,27 @@ export function HouseholdItemsTable({ items }: HouseholdItemsTableProps) {
     } else {
       setSelectedRows(new Set(items.map((item) => item.id)));
     }
+  };
+
+  // Calculate paginated data
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return items.slice(startIndex, endIndex);
+  }, [items, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when items change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [items.length]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
   };
 
   if (!items || items.length === 0) {
@@ -63,7 +87,7 @@ export function HouseholdItemsTable({ items }: HouseholdItemsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.map((item) => (
+          {paginatedItems.map((item) => (
             <TableRow key={item.id}>
               <TableCell className="pl-6">
                 <Checkbox
@@ -82,6 +106,13 @@ export function HouseholdItemsTable({ items }: HouseholdItemsTableProps) {
           ))}
         </TableBody>
       </Table>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={items.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +13,13 @@ import { District } from "@/lib/types/districts";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +35,8 @@ interface DistrictsTableProps {
 
 export function DistrictsTable({ districts }: DistrictsTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
@@ -54,6 +63,27 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
     setUpdateDialogOpen(true);
   };
 
+  // Calculate paginated data
+  const paginatedDistricts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return districts.slice(startIndex, endIndex);
+  }, [districts, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when districts change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [districts.length]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
   if (districts.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-8 text-center">
@@ -63,8 +93,9 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
   }
 
   return (
-    <div className="rounded-lg border bg-white">
-      <Table>
+    <TooltipProvider>
+      <div className="rounded-lg border bg-white">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-12 pl-6">
@@ -81,7 +112,7 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {districts.filter(district => district.id).map((district) => (
+          {paginatedDistricts.filter(district => district.id).map((district) => (
             <TableRow key={district.id}>
               <TableCell className="pl-6">
                 <Checkbox
@@ -117,9 +148,23 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
                     );
                   })}
                   {district.lga.length > 3 && (
-                    <Badge className="text-xs bg-slate-100 text-slate-900 hover:bg-slate-100 border-0">
-                      +{district.lga.length - 3} more
-                    </Badge>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge className="text-xs bg-slate-100 text-slate-900 hover:bg-slate-100 border-0 cursor-help">
+                          +{district.lga.length - 3} more
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <div className="flex flex-wrap gap-1">
+                          {district.lga.slice(3).map((lga) => (
+                            <span key={lga.id} className="text-xs">
+                              {lga.name}
+                              {district.lga.indexOf(lga) < district.lga.length - 1 ? ", " : ""}
+                            </span>
+                          ))}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                 </div>
               </TableCell>
@@ -143,6 +188,13 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
           ))}
         </TableBody>
       </Table>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={districts.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+      />
 
       {editingDistrict && (
         <UpdateDistrictDialog
@@ -151,6 +203,7 @@ export function DistrictsTable({ districts }: DistrictsTableProps) {
           onOpenChange={setUpdateDialogOpen}
         />
       )}
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }

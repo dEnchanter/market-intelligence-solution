@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Market } from "@/lib/types/markets";
 import {
   Table,
@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +42,8 @@ export function MarketsTable({ markets, onEdit }: MarketsTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [marketToToggle, setMarketToToggle] = useState<Market | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const updateStatusMutation = useUpdateMarketStatus();
 
   const toggleRow = (id: string) => {
@@ -78,6 +81,27 @@ export function MarketsTable({ markets, onEdit }: MarketsTableProps) {
     setMarketToToggle(null);
   };
 
+  // Calculate paginated data
+  const paginatedMarkets = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return markets.slice(startIndex, endIndex);
+  }, [markets, currentPage, itemsPerPage]);
+
+  // Reset to page 1 when markets change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [markets.length]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
   if (!markets || markets.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-12 text-center">
@@ -108,7 +132,7 @@ export function MarketsTable({ markets, onEdit }: MarketsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {markets.map((market) => (
+          {paginatedMarkets.map((market) => (
             <TableRow key={market.id}>
               <TableCell className="pl-6">
                 <Checkbox
@@ -176,6 +200,13 @@ export function MarketsTable({ markets, onEdit }: MarketsTableProps) {
           ))}
         </TableBody>
       </Table>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={markets.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+        onItemsPerPageChange={handleItemsPerPageChange}
+      />
 
       {/* Confirmation Dialog */}
       <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>

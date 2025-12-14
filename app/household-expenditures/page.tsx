@@ -8,8 +8,9 @@ import { ExpendituresEmptyState } from "@/components/household-expenditures/empt
 import { ExpendituresErrorState } from "@/components/household-expenditures/error-state";
 import { useExpenditures } from "@/hooks/use-household-expenditures";
 import { useHouseholds } from "@/hooks/use-households";
-import { useConsumptionItems } from "@/hooks/use-consumption-items";
+import { useHouseholdItems } from "@/hooks/use-household-items";
 import { useDistricts } from "@/hooks/use-districts";
+import { useUsers } from "@/hooks/use-users";
 import { ExpenditureListFilters } from "@/lib/types/household-expenditures";
 import { exportExpendituresToCSV } from "@/lib/utils/export";
 import { Button } from "@/components/ui/button";
@@ -40,14 +41,15 @@ import { cn } from "@/lib/utils";
 export default function HouseholdExpendituresPage() {
   const [filters, setFilters] = useState<ExpenditureListFilters>({});
   const [tempFilters, setTempFilters] = useState<ExpenditureListFilters>({});
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [itemSearchOpen, setItemSearchOpen] = useState(false);
   const [itemSearchValue, setItemSearchValue] = useState("");
 
   const { data, isLoading, error, refetch } = useExpenditures(filters);
   const { data: householdsData } = useHouseholds();
-  const { data: itemsData } = useConsumptionItems();
+  const { data: itemsData } = useHouseholdItems();
   const { data: districtsData } = useDistricts();
+  const { data: usersData } = useUsers();
 
   const applyFilters = () => {
     setFilters(tempFilters);
@@ -86,6 +88,11 @@ export default function HouseholdExpendituresPage() {
   const selectedItem = useMemo(() => {
     return itemsData?.data?.find(item => item.id === tempFilters.item_id);
   }, [itemsData, tempFilters.item_id]);
+
+  // Filter users to only show Field profile type
+  const fieldUsers = useMemo(() => {
+    return usersData?.data?.filter((user: any) => user.ProfileType === "Field") || [];
+  }, [usersData]);
 
   return (
     <AppLayout>
@@ -135,7 +142,7 @@ export default function HouseholdExpendituresPage() {
 
             {showFilters && (
               <div className="p-6 pt-0 border-t">
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                   {/* Household Filter */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -150,7 +157,7 @@ export default function HouseholdExpendituresPage() {
                         })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="All households" />
                       </SelectTrigger>
                       <SelectContent>
@@ -167,7 +174,7 @@ export default function HouseholdExpendituresPage() {
                   {/* Item Filter with Search */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Consumption Item
+                      Household Item
                     </label>
                     <Popover open={itemSearchOpen} onOpenChange={setItemSearchOpen}>
                       <PopoverTrigger asChild>
@@ -176,8 +183,11 @@ export default function HouseholdExpendituresPage() {
                           role="combobox"
                           aria-expanded={itemSearchOpen}
                           className="w-full justify-between"
+                          title={selectedItem ? selectedItem.item : "All items"}
                         >
-                          {selectedItem ? selectedItem.item : "All items"}
+                          <span className="truncate">
+                            {selectedItem ? selectedItem.item : "All items"}
+                          </span>
                           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -254,7 +264,7 @@ export default function HouseholdExpendituresPage() {
                         })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="All months" />
                       </SelectTrigger>
                       <SelectContent>
@@ -282,7 +292,7 @@ export default function HouseholdExpendituresPage() {
                         })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="All years" />
                       </SelectTrigger>
                       <SelectContent>
@@ -310,7 +320,7 @@ export default function HouseholdExpendituresPage() {
                         })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="All districts" />
                       </SelectTrigger>
                       <SelectContent>
@@ -339,6 +349,40 @@ export default function HouseholdExpendituresPage() {
                         })
                       }
                     />
+                  </div>
+
+                  {/* Field User Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Field User
+                    </label>
+                    <Select
+                      value={tempFilters.added_by_id || "all"}
+                      onValueChange={(value) =>
+                        setTempFilters({
+                          ...tempFilters,
+                          added_by_id: value === "all" ? undefined : value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="All field users" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All field users</SelectItem>
+                        {fieldUsers && Array.isArray(fieldUsers) && fieldUsers.length > 0 ? (
+                          fieldUsers.map((user: any) => (
+                            <SelectItem key={user.id} value={user.id || ""}>
+                              {user.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-data" disabled>
+                            No field users available
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -373,7 +417,10 @@ export default function HouseholdExpendituresPage() {
               <h3 className="text-sm font-medium text-gray-600">
                 Total Amount
               </h3>
-              <p className="mt-2 text-3xl font-bold text-[#013370]">
+              <p
+                className="mt-2 text-xl md:text-2xl font-bold text-[#013370]"
+                title={`₦${data?.data?.reduce((sum, exp) => sum + exp.amount, 0).toLocaleString() || 0}`}
+              >
                 ₦
                 {data?.data
                   ?.reduce((sum, exp) => sum + exp.amount, 0)
