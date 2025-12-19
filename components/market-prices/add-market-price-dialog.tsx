@@ -86,7 +86,7 @@ export function AddMarketPriceDialog() {
       await createPrice.mutateAsync({
         item_id: values.item_id,
         market_id: values.market_id,
-        price: parseFloat(values.price),
+        price: parseFloat(values.price.replace(/,/g, "")),
         month: parseInt(values.month),
         year: parseInt(values.year),
         capture_date: values.capture_date,
@@ -165,10 +165,16 @@ export function AddMarketPriceDialog() {
                   <FormLabel>Price (NGN)</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      step="0.01"
+                      type="text"
                       placeholder="Enter price"
                       {...field}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/,/g, "");
+                        if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                          const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                          field.onChange(formatted);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

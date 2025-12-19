@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Pagination } from "@/components/ui/pagination";
+import { EditMarketPriceDialog } from "./edit-market-price-dialog";
 
 interface MarketPricesTableProps {
   prices: MarketPrice[];
@@ -110,7 +111,8 @@ export function MarketPricesTable({ prices }: MarketPricesTableProps) {
             <TableHead className="px-4">Price</TableHead>
             <TableHead className="px-4">Period</TableHead>
             <TableHead className="px-4">Capture Date</TableHead>
-            <TableHead className="pr-8">Location</TableHead>
+            <TableHead className="px-4">Location</TableHead>
+            <TableHead className="pr-8">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -152,8 +154,11 @@ export function MarketPricesTable({ prices }: MarketPricesTableProps) {
               <TableCell className="px-4">
                 {formatDate(price.capture_date)}
               </TableCell>
-              <TableCell className="pr-8 text-sm text-gray-600">
+              <TableCell className="px-4 text-sm text-gray-600">
                 {price.location.latitude.toFixed(4)}°, {price.location.longitude.toFixed(4)}°
+              </TableCell>
+              <TableCell className="pr-8">
+                <EditMarketPriceDialog marketPrice={price} />
               </TableCell>
             </TableRow>
           ))}

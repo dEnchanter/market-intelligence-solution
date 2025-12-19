@@ -22,6 +22,7 @@ export const API_CONFIG = {
     HOUSEHOLD_EXPENDITURES: {
       BASE: "/api/household-expenditures",
       STATS: "/api/household-expenditures/stats",
+      UPDATE_PRICE: (id: string) => `/api/household-expenditures/${id}/price`,
     },
     HOUSEHOLD_ITEMS: {
       BASE: "/api/household-items",
@@ -33,6 +34,7 @@ export const API_CONFIG = {
     MARKET_PRICES: {
       BASE: "/api/market-prices",
       STATS: "/api/market-prices/stats",
+      UPDATE_PRICE: (id: string) => `/api/market-prices/${id}/price`,
     },
     MARKETS: {
       BASE: "/api/markets",

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { householdExpendituresApi } from "@/lib/api/household-expenditures";
 import {
   CreateExpenditureRequest,
+  UpdateExpenditureRequest,
   ExpenditureListFilters,
   ExpenditureStatsFilters,
 } from "@/lib/types/household-expenditures";
@@ -39,6 +40,28 @@ export function useCreateExpenditure() {
     },
     onError: (error: Error) => {
       toast.error("Failed to Record Expenditure", {
+        description: error.message || "An error occurred. Please try again.",
+      });
+    },
+  });
+}
+
+// Mutation: Update household expenditure price
+export function useUpdateExpenditure() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateExpenditureRequest }) =>
+      householdExpendituresApi.update(id, data),
+    onSuccess: (data) => {
+      toast.success("Expenditure Updated", {
+        description:
+          data.message || "The expenditure has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["household-expenditures"] });
+    },
+    onError: (error: Error) => {
+      toast.error("Failed to Update Expenditure", {
         description: error.message || "An error occurred. Please try again.",
       });
     },

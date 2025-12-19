@@ -94,7 +94,7 @@ export function AddExpenditureDialog() {
       {
         household_id: data.household_id,
         item_id: data.item_id,
-        amount: parseFloat(data.amount),
+        amount: parseFloat(data.amount.replace(/,/g, "")),
         month: parseInt(data.month),
         year: parseInt(data.year),
         location: {
@@ -232,10 +232,16 @@ export function AddExpenditureDialog() {
                   <FormLabel>Amount Spent (₦)</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      step="0.01"
+                      type="text"
                       placeholder="Enter amount"
                       {...field}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/,/g, "");
+                        if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                          const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                          field.onChange(formatted);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

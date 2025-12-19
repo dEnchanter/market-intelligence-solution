@@ -65,6 +65,12 @@ export interface CreateMarketPriceRequest {
   year: number;
 }
 
+// Update market price request
+export interface UpdateMarketPriceRequest {
+  price: number;
+  volume: number;
+}
+
 // Market price stats filters
 export interface MarketPriceStatsFilters {
   market_id?: string;
@@ -89,5 +95,6 @@ export interface MarketPriceApiResponse<T> {
 
 // Response types
 export type CreateMarketPriceResponse = MarketPriceApiResponse<MarketPrice>;
+export type UpdateMarketPriceResponse = MarketPriceApiResponse<MarketPrice>;
 export type GetMarketPriceStatsResponse = MarketPriceApiResponse<any>; // Stats structure not specified
 export type GetMarketPriceListResponse = MarketPriceApiResponse<MarketPrice[]>;

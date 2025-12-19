@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { marketPricesApi } from "@/lib/api/market-prices";
 import {
   CreateMarketPriceRequest,
+  UpdateMarketPriceRequest,
   MarketPriceStatsFilters,
   MarketPriceListFilters,
 } from "@/lib/types/market-prices";
@@ -37,6 +38,27 @@ export function useCreateMarketPrice() {
     },
     onError: (error: Error) => {
       toast.error("Failed to Add Market Price", {
+        description: error.message || "An error occurred. Please try again.",
+      });
+    },
+  });
+}
+
+// Mutation: Update market price
+export function useUpdateMarketPrice() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateMarketPriceRequest }) =>
+      marketPricesApi.update(id, data),
+    onSuccess: (data) => {
+      toast.success("Market Price Updated", {
+        description: data.message || "The market price has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["market-prices"] });
+    },
+    onError: (error: Error) => {
+      toast.error("Failed to Update Market Price", {
         description: error.message || "An error occurred. Please try again.",
       });
     },

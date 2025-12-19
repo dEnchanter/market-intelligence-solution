@@ -62,6 +62,11 @@ export interface CreateExpenditureRequest {
   year: number;
 }
 
+// Update expenditure request
+export interface UpdateExpenditureRequest {
+  amount: number;
+}
+
 // List filters
 export interface ExpenditureListFilters {
   household_id?: string;
@@ -89,5 +94,6 @@ export interface ExpenditureApiResponse<T> {
 
 // Response types
 export type CreateExpenditureResponse = ExpenditureApiResponse<HouseholdExpenditure>;
+export type UpdateExpenditureResponse = ExpenditureApiResponse<HouseholdExpenditure>;
 export type GetExpenditureListResponse = ExpenditureApiResponse<HouseholdExpenditure[]>;
 export type GetExpenditureStatsResponse = ExpenditureApiResponse<any>; // Stats structure not specified, using any

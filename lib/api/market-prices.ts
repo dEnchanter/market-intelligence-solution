@@ -2,6 +2,8 @@ import { API_CONFIG, getApiUrl, getAuthHeaders } from "./config";
 import {
   CreateMarketPriceRequest,
   CreateMarketPriceResponse,
+  UpdateMarketPriceRequest,
+  UpdateMarketPriceResponse,
   MarketPriceStatsFilters,
   GetMarketPriceStatsResponse,
   MarketPriceListFilters,
@@ -27,6 +29,36 @@ export const marketPricesApi = {
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to create market price");
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
+
+  // Update a market price entry
+  update: async (
+    id: string,
+    payload: UpdateMarketPriceRequest
+  ): Promise<UpdateMarketPriceResponse> => {
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.MARKET_PRICES.UPDATE_PRICE(id)),
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update market price");
       }
 
       return data;

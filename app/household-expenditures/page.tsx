@@ -51,6 +51,20 @@ export default function HouseholdExpendituresPage() {
   const { data: districtsData } = useDistricts();
   const { data: usersData } = useUsers();
 
+  // Helper function to abbreviate large numbers
+  const abbreviateNumber = (value: number): string => {
+    if (value >= 1_000_000_000) {
+      return `${(value / 1_000_000_000).toFixed(1)}B`;
+    }
+    if (value >= 1_000_000) {
+      return `${(value / 1_000_000).toFixed(1)}M`;
+    }
+    if (value >= 1_000) {
+      return `${(value / 1_000).toFixed(1)}K`;
+    }
+    return value.toLocaleString();
+  };
+
   const applyFilters = () => {
     setFilters(tempFilters);
   };
@@ -418,13 +432,10 @@ export default function HouseholdExpendituresPage() {
                 Total Amount
               </h3>
               <p
-                className="mt-2 text-xl md:text-2xl font-bold text-[#013370]"
+                className="mt-2 text-3xl font-bold text-[#013370] cursor-help"
                 title={`₦${data?.data?.reduce((sum, exp) => sum + exp.amount, 0).toLocaleString() || 0}`}
               >
-                ₦
-                {data?.data
-                  ?.reduce((sum, exp) => sum + exp.amount, 0)
-                  .toLocaleString() || 0}
+                ₦{abbreviateNumber(data?.data?.reduce((sum, exp) => sum + exp.amount, 0) || 0)}
               </p>
             </div>
             <div className="rounded-lg border bg-white p-6 shadow-sm">

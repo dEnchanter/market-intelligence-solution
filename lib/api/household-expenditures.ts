@@ -2,6 +2,8 @@ import { API_CONFIG, getApiUrl, getAuthHeaders } from "./config";
 import {
   CreateExpenditureRequest,
   CreateExpenditureResponse,
+  UpdateExpenditureRequest,
+  UpdateExpenditureResponse,
   ExpenditureListFilters,
   GetExpenditureListResponse,
   ExpenditureStatsFilters,
@@ -105,6 +107,36 @@ export const householdExpendituresApi = {
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch expenditure stats");
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
+
+  // Update expenditure price
+  update: async (
+    id: string,
+    payload: UpdateExpenditureRequest
+  ): Promise<UpdateExpenditureResponse> => {
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.HOUSEHOLD_EXPENDITURES.UPDATE_PRICE(id)),
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update expenditure");
       }
 
       return data;
