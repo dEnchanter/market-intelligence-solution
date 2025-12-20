@@ -79,6 +79,16 @@ export function EditMarketPriceDialog({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <FormLabel>Item Name</FormLabel>
+              <Input
+                type="text"
+                value={marketPrice.item?.item || "N/A"}
+                disabled
+                className="bg-gray-50 cursor-not-allowed"
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="price"
