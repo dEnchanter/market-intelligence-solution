@@ -13,6 +13,9 @@ import { Household } from "@/lib/types/households";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Pagination } from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { EditHouseholdDialog } from "./edit-household-dialog";
 
 interface HouseholdsTableProps {
   households: Household[];
@@ -22,6 +25,8 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const toggleRow = (id: string) => {
     const newSelected = new Set(selectedRows);
@@ -62,6 +67,16 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
     setCurrentPage(1);
   };
 
+  const handleEdit = (household: Household) => {
+    setEditingHousehold(household);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+    setEditingHousehold(null);
+  };
+
   if (households.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-8 text-center">
@@ -86,7 +101,8 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
             <TableHead className="px-4">Contact Info</TableHead>
             <TableHead className="px-4">LGA</TableHead>
             <TableHead className="px-4">Town</TableHead>
-            <TableHead className="px-4 pr-6">Address</TableHead>
+            <TableHead className="px-4">Address</TableHead>
+            <TableHead className="px-4 pr-6">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -121,8 +137,18 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
                   {household.town}
                 </Badge>
               </TableCell>
-              <TableCell className="px-4 pr-6 max-w-xs truncate">
+              <TableCell className="px-4 max-w-xs truncate">
                 {household.address}
+              </TableCell>
+              <TableCell className="px-4 pr-6">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEdit(household)}
+                  className="h-8 w-8 p-0"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -135,6 +161,14 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
       />
+
+      {editingHousehold && (
+        <EditHouseholdDialog
+          household={editingHousehold}
+          open={isEditDialogOpen}
+          onClose={handleCloseEditDialog}
+        />
+      )}
     </div>
   );
 }

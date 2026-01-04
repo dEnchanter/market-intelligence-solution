@@ -9,6 +9,7 @@ export const API_CONFIG = {
     CONSUMPTION_ITEMS: {
       IMPORT: "/api/consumption-items/import",
       LIST: "/api/consumption-items",
+      UPDATE: (id: string) => `/api/consumption-items/${id}`,
     },
     DISTRICTS: {
       BASE: "/api/districts",
@@ -26,10 +27,12 @@ export const API_CONFIG = {
     },
     HOUSEHOLD_ITEMS: {
       BASE: "/api/household-items",
+      UPDATE: (id: string) => `/api/household-items/${id}`,
     },
     HOUSEHOLDS: {
       BASE: "/api/households",
       NEARBY: "/api/households/nearby",
+      UPDATE: (id: string) => `/api/households/${id}`,
     },
     MARKET_PRICES: {
       BASE: "/api/market-prices",

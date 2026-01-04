@@ -4,6 +4,8 @@ import {
   ImportConsumptionItemsResponse,
   GetConsumptionItemsResponse,
   ConsumptionItemsFilters,
+  UpdateConsumptionItemRequest,
+  UpdateConsumptionItemResponse,
 } from "../types/consumption-items";
 
 export const consumptionItemsApi = {
@@ -64,6 +66,36 @@ export const consumptionItemsApi = {
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch consumption items");
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
+
+  // Update consumption item
+  update: async (
+    id: string,
+    payload: UpdateConsumptionItemRequest
+  ): Promise<UpdateConsumptionItemResponse> => {
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.CONSUMPTION_ITEMS.UPDATE(id)),
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Update failed");
       }
 
       return data;

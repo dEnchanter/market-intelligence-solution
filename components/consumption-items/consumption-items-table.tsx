@@ -13,7 +13,8 @@ import { ConsumptionItem } from "@/lib/types/consumption-items";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+import { EditConsumptionItemDialog } from "./edit-consumption-item-dialog";
 
 interface ConsumptionItemsTableProps {
   items: ConsumptionItem[];
@@ -22,6 +23,8 @@ interface ConsumptionItemsTableProps {
 export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingItem, setEditingItem] = useState<ConsumptionItem | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const itemsPerPage = 10;
 
   // Calculate pagination
@@ -56,6 +59,16 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
+  const handleEdit = (item: ConsumptionItem) => {
+    setEditingItem(item);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+    setEditingItem(null);
+  };
+
   if (items.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-8 text-center">
@@ -81,7 +94,8 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
               <TableHead className="px-4">Group</TableHead>
               <TableHead className="px-4">Class</TableHead>
               <TableHead className="px-4">Subclass</TableHead>
-              <TableHead className="px-4 pr-6">Unit of Measure</TableHead>
+              <TableHead className="px-4">Unit of Measure</TableHead>
+              <TableHead className="px-4 pr-6">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,10 +136,20 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
                   {item.subclass}
                 </Badge>
               </TableCell>
-              <TableCell className="px-4 pr-6">
+              <TableCell className="px-4">
                 <Badge className="bg-purple-100 text-purple-900 hover:bg-purple-100 border-0">
                   {item.unit_of_measure}
                 </Badge>
+              </TableCell>
+              <TableCell className="px-4 pr-6">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEdit(item)}
+                  className="h-8 w-8 p-0"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -165,6 +189,14 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
         </Button>
       </div>
     </div>
+
+    {editingItem && (
+      <EditConsumptionItemDialog
+        item={editingItem}
+        open={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+      />
+    )}
   </div>
   );
 }

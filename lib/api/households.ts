@@ -5,6 +5,8 @@ import {
   GetHouseholdsResponse,
   NearbyHouseholdsFilters,
   GetNearbyHouseholdsResponse,
+  UpdateHouseholdRequest,
+  UpdateHouseholdResponse,
 } from "../types/households";
 
 export const householdsApi = {
@@ -85,6 +87,36 @@ export const householdsApi = {
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch nearby households");
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
+
+  // Update household
+  update: async (
+    id: string,
+    payload: UpdateHouseholdRequest
+  ): Promise<UpdateHouseholdResponse> => {
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.HOUSEHOLDS.UPDATE(id)),
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Update failed");
       }
 
       return data;

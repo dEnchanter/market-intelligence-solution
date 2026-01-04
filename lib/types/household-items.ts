@@ -11,3 +11,14 @@ export interface GetHouseholdItemsResponse {
   message: string;
   success: boolean;
 }
+
+export interface UpdateHouseholdItemRequest {
+  group?: string;
+  item?: string;
+}
+
+export interface UpdateHouseholdItemResponse {
+  data: HouseholdItem;
+  message: string;
+  success: boolean;
+}

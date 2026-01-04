@@ -51,7 +51,16 @@ export interface HouseholdApiResponse<T> {
   success: boolean;
 }
 
+// Update household request
+export interface UpdateHouseholdRequest {
+  contact_name?: string;
+  contact_phone?: string;
+  household_name?: string;
+  town?: string;
+}
+
 // Response types
 export type CreateHouseholdResponse = HouseholdApiResponse<Household>;
 export type GetHouseholdsResponse = HouseholdApiResponse<Household[]>;
 export type GetNearbyHouseholdsResponse = HouseholdApiResponse<Household[]>;
+export type UpdateHouseholdResponse = HouseholdApiResponse<Household>;

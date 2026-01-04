@@ -32,3 +32,15 @@ export interface GetConsumptionItemsResponse {
   message: string;
   success: boolean;
 }
+
+export interface UpdateConsumptionItemRequest {
+  description?: string;
+  item?: string;
+  unit_of_measure?: string;
+}
+
+export interface UpdateConsumptionItemResponse {
+  data: ConsumptionItem;
+  message: string;
+  success: boolean;
+}

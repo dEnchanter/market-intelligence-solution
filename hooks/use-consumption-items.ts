@@ -3,6 +3,7 @@ import { consumptionItemsApi } from "@/lib/api/consumption-items";
 import {
   ConsumptionItemsFilters,
   ImportConsumptionItemsRequest,
+  UpdateConsumptionItemRequest,
 } from "@/lib/types/consumption-items";
 import { toast } from "sonner";
 
@@ -30,6 +31,28 @@ export function useImportConsumptionItems() {
     },
     onError: (error: Error) => {
       toast.error("Failed to Import Items", {
+        description: error.message || "An error occurred. Please try again.",
+      });
+    },
+  });
+}
+
+// Mutation: Update consumption item
+export function useUpdateConsumptionItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateConsumptionItemRequest }) =>
+      consumptionItemsApi.update(id, data),
+    onSuccess: (data) => {
+      toast.success("Item Updated", {
+        description:
+          data.message || "Consumption item has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["consumption-items"] });
+    },
+    onError: (error: Error) => {
+      toast.error("Failed to Update Item", {
         description: error.message || "An error occurred. Please try again.",
       });
     },

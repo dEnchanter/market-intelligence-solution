@@ -20,7 +20,8 @@
       "Bash(for dir in markets districts users household-items)",
       "Bash(do echo \"Processing $dir\")",
       "Bash(done)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
