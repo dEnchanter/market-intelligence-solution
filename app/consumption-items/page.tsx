@@ -1,16 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { AppLayout } from "@/components/app-layout";
 import { MaxWidthWrapper } from "@/components/utils/max-width-wrapper";
 import { ConsumptionItemsTable } from "@/components/consumption-items/consumption-items-table";
 import { ConsumptionItemsEmptyState } from "@/components/consumption-items/empty-state";
 import { ConsumptionItemsErrorState } from "@/components/consumption-items/error-state";
+import { AddConsumptionItemDialog } from "@/components/consumption-items/add-consumption-item-dialog";
+// import { ImportItemsDialog } from "@/components/consumption-items/import-items-dialog";
 import { useConsumptionItems } from "@/hooks/use-consumption-items";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ConsumptionItemsPage() {
   const { data, isLoading, error, refetch } = useConsumptionItems();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleDownload = () => {
     if (!data?.data || data.data.length === 0) return;
@@ -70,14 +74,24 @@ export default function ConsumptionItemsPage() {
                 Manage consumption items for market intelligence tracking
               </p>
             </div>
-            <Button
-              onClick={handleDownload}
-              disabled={!data?.data || data.data.length === 0}
-              className="bg-[#013370] hover:bg-[#013370]/90"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Download CSV
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setIsAddDialogOpen(true)}
+                className="bg-[#013370] hover:bg-[#012a5c]"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Item
+              </Button>
+              {/* <ImportItemsDialog /> */}
+              <Button
+                onClick={handleDownload}
+                disabled={!data?.data || data.data.length === 0}
+                variant="outline"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download CSV
+              </Button>
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -133,6 +147,11 @@ export default function ConsumptionItemsPage() {
           )}
         </div>
       </MaxWidthWrapper>
+
+      <AddConsumptionItemDialog
+        open={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+      />
     </AppLayout>
   );
 }

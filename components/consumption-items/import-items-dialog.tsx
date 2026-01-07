@@ -71,6 +71,7 @@ export function ImportItemsDialog() {
         subclass: item.subclass || "",
         durability: item.durability || "",
         unit_of_measure: item.unit_of_measure || "",
+        IsActive: true,
       });
     }
 

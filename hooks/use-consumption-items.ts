@@ -58,3 +58,24 @@ export function useUpdateConsumptionItem() {
     },
   });
 }
+
+// Mutation: Delete consumption item
+export function useDeleteConsumptionItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => consumptionItemsApi.delete(id),
+    onSuccess: (data) => {
+      toast.success("Item Deleted", {
+        description:
+          data.message || "Consumption item has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["consumption-items"] });
+    },
+    onError: (error: Error) => {
+      toast.error("Failed to Delete Item", {
+        description: error.message || "An error occurred. Please try again.",
+      });
+    },
+  });
+}

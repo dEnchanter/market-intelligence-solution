@@ -10,6 +10,7 @@ export const API_CONFIG = {
       IMPORT: "/api/consumption-items/import",
       LIST: "/api/consumption-items",
       UPDATE: (id: string) => `/api/consumption-items/${id}`,
+      DELETE: (id: string) => `/api/consumption-items/${id}`,
     },
     DISTRICTS: {
       BASE: "/api/districts",
@@ -27,7 +28,9 @@ export const API_CONFIG = {
     },
     HOUSEHOLD_ITEMS: {
       BASE: "/api/household-items",
+      CREATE: "/api/household-items",
       UPDATE: (id: string) => `/api/household-items/${id}`,
+      DELETE: (id: string) => `/api/household-items/${id}`,
     },
     HOUSEHOLDS: {
       BASE: "/api/households",

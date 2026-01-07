@@ -1,17 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { AppLayout } from "@/components/app-layout";
 import { MaxWidthWrapper } from "@/components/utils/max-width-wrapper";
 import { HouseholdItemsTable } from "@/components/household-items/household-items-table";
 import { HouseholdItemsEmptyState } from "@/components/household-items/empty-state";
 import { HouseholdItemsErrorState } from "@/components/household-items/error-state";
+import { AddHouseholdItemDialog } from "@/components/household-items/add-household-item-dialog";
 import { useHouseholdItems } from "@/hooks/use-household-items";
 import { exportHouseholdItemsToCSV } from "@/lib/utils/export";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, Plus } from "lucide-react";
 
 export default function HouseholdItemsPage() {
   const { data, isLoading, error, refetch } = useHouseholdItems();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleDownload = () => {
     if (data?.data && data.data.length > 0) {
@@ -33,14 +36,23 @@ export default function HouseholdItemsPage() {
                 Manage household items for expenditure tracking
               </p>
             </div>
-            <Button
-              onClick={handleDownload}
-              disabled={!data?.data || data.data.length === 0 || isLoading}
-              className="bg-[#013370] hover:bg-[#012a5c]"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Download CSV
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setIsAddDialogOpen(true)}
+                className="bg-[#013370] hover:bg-[#012a5c]"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Item
+              </Button>
+              <Button
+                onClick={handleDownload}
+                disabled={!data?.data || data.data.length === 0 || isLoading}
+                variant="outline"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download CSV
+              </Button>
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -80,6 +92,11 @@ export default function HouseholdItemsPage() {
           )}
         </div>
       </MaxWidthWrapper>
+
+      <AddHouseholdItemDialog
+        open={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+      />
     </AppLayout>
   );
 }

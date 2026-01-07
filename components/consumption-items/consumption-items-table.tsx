@@ -13,8 +13,19 @@ import { ConsumptionItem } from "@/lib/types/consumption-items";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { EditConsumptionItemDialog } from "./edit-consumption-item-dialog";
+import { useDeleteConsumptionItem } from "@/hooks/use-consumption-items";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ConsumptionItemsTableProps {
   items: ConsumptionItem[];
@@ -25,7 +36,11 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingItem, setEditingItem] = useState<ConsumptionItem | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [deletingItem, setDeletingItem] = useState<ConsumptionItem | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const itemsPerPage = 10;
+
+  const deleteConsumptionItem = useDeleteConsumptionItem();
 
   // Calculate pagination
   const totalPages = Math.ceil(items.length / itemsPerPage);
@@ -69,6 +84,27 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
     setEditingItem(null);
   };
 
+  const handleDelete = (item: ConsumptionItem) => {
+    setDeletingItem(item);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deletingItem) {
+      deleteConsumptionItem.mutate(deletingItem.id, {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          setDeletingItem(null);
+        },
+      });
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+    setDeletingItem(null);
+  };
+
   if (items.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-8 text-center">
@@ -95,6 +131,7 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
               <TableHead className="px-4">Class</TableHead>
               <TableHead className="px-4">Subclass</TableHead>
               <TableHead className="px-4">Unit of Measure</TableHead>
+              <TableHead className="px-4">Status</TableHead>
               <TableHead className="px-4 pr-6">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -141,15 +178,36 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
                   {item.unit_of_measure}
                 </Badge>
               </TableCell>
+              <TableCell className="px-4">
+                {item.IsActive ? (
+                  <Badge className="bg-green-100 text-green-900 hover:bg-green-100 border-0">
+                    Active
+                  </Badge>
+                ) : (
+                  <Badge className="bg-gray-100 text-gray-900 hover:bg-gray-100 border-0">
+                    Inactive
+                  </Badge>
+                )}
+              </TableCell>
               <TableCell className="px-4 pr-6">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleEdit(item)}
-                  className="h-8 w-8 p-0"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEdit(item)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(item)}
+                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -197,6 +255,30 @@ export function ConsumptionItemsTable({ items }: ConsumptionItemsTableProps) {
         onClose={handleCloseEditDialog}
       />
     )}
+
+    <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete the consumption item &quot;{deletingItem?.item}&quot;.
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={handleCancelDelete}>
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirmDelete}
+            className="bg-red-600 hover:bg-red-700"
+            disabled={deleteConsumptionItem.isPending}
+          >
+            {deleteConsumptionItem.isPending ? "Deleting..." : "Delete"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
   );
 }

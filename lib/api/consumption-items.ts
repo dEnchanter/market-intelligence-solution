@@ -6,6 +6,7 @@ import {
   ConsumptionItemsFilters,
   UpdateConsumptionItemRequest,
   UpdateConsumptionItemResponse,
+  DeleteConsumptionItemResponse,
 } from "../types/consumption-items";
 
 export const consumptionItemsApi = {
@@ -96,6 +97,32 @@ export const consumptionItemsApi = {
 
       if (!response.ok) {
         throw new Error(data.message || "Update failed");
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
+
+  // Delete consumption item
+  delete: async (id: string): Promise<DeleteConsumptionItemResponse> => {
+    try {
+      const response = await fetch(
+        getApiUrl(API_CONFIG.ENDPOINTS.CONSUMPTION_ITEMS.DELETE(id)),
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Delete failed");
       }
 
       return data;

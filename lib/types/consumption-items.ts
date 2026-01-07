@@ -7,6 +7,7 @@ export interface ConsumptionItem {
   item: string;
   subclass: string;
   unit_of_measure: string;
+  IsActive: boolean;
 }
 
 export interface ImportConsumptionItemsRequest {
@@ -41,6 +42,12 @@ export interface UpdateConsumptionItemRequest {
 
 export interface UpdateConsumptionItemResponse {
   data: ConsumptionItem;
+  message: string;
+  success: boolean;
+}
+
+export interface DeleteConsumptionItemResponse {
+  data: string;
   message: string;
   success: boolean;
 }
