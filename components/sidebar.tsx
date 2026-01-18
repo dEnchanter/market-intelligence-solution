@@ -14,6 +14,7 @@ import {
   Package,
   Receipt,
   Home,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -67,6 +68,11 @@ const menuItems = [
     title: "Market Prices",
     href: "/market-prices",
     icon: TrendingUp,
+  },
+  {
+    title: "CPI Report",
+    href: "/cpi-report",
+    icon: BarChart3,
   },
 ];
 

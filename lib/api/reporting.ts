@@ -4,6 +4,8 @@ import {
   MyMarketHouseholdReportFilters,
   GetMarketHouseholdReportResponse,
   GetMyMarketHouseholdReportResponse,
+  CPIReportRequest,
+  GetCPIReportResponse,
 } from "../types/reporting";
 
 export const reportingApi = {
@@ -86,6 +88,34 @@ export const reportingApi = {
         throw new Error(
           data.message || "Failed to fetch my market household report"
         );
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
+
+  // Generate CPI report (POST endpoint)
+  generateCPIReport: async (
+    payload: CPIReportRequest
+  ): Promise<GetCPIReportResponse> => {
+    try {
+      const url = getApiUrl(API_CONFIG.ENDPOINTS.REPORTING.CPI);
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to generate CPI report");
       }
 
       return data;

@@ -51,6 +51,7 @@ export const API_CONFIG = {
     REPORTING: {
       MARKET_HOUSEHOLD: "/api/reporting/market-household",
       MY_MARKET_HOUSEHOLD: "/api/reporting/my-market-household",
+      CPI: "/api/cpi/report",
     },
     STATS: {
       SUMMARY: "/api/stats/summary",
