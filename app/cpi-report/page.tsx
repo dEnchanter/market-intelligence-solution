@@ -244,6 +244,34 @@ export default function CPIReportPage() {
   const handleExport = () => {
     if (!reportData) return;
 
+    // Summary section
+    const summarySection = [
+      ["CPI Report Summary"],
+      ["Base Period", `${getMonthName(reportData.base_month)} ${reportData.base_year}`],
+      ["Current Period", `${getMonthName(reportData.month)} ${reportData.year}`],
+      ["Weight Scope", reportData.weight_scope],
+      ["Scope", reportData.scope],
+      [""],
+      ["Consumer Price Index (CPI)", formatNumber(reportData.cpi, 2)],
+      ["Laspeyres Index", formatNumber(reportData.laspeyres, 4)],
+      [""],
+      ["Group Summary"],
+      ["Group", "Weight", "Weight (Frac)", "Jevons Index", "Young Index"],
+    ];
+
+    // Add group summary rows
+    reportData.groups?.forEach((group) => {
+      summarySection.push([
+        group.group,
+        formatNumber(group.group_weight),
+        formatNumber(group.group_weight_frac, 4),
+        formatNumber(group.jevons_group, 4),
+        formatNumber(group.young_group, 4),
+      ]);
+    });
+
+    summarySection.push([""], ["Item Price Relatives"]);
+
     const headers = [
       "Category",
       "Class",
@@ -282,6 +310,9 @@ export default function CPIReportPage() {
     });
 
     const csvContent = [
+      ...summarySection.map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+      ),
       headers.join(","),
       ...rows.map((row) =>
         row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")
@@ -595,6 +626,43 @@ export default function CPIReportPage() {
                       <span className="font-medium">{reportData.scope}</span>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* CPI Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="rounded-lg border bg-gradient-to-br from-[#013370] to-[#024a9e] p-6 text-white shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-blue-100">Consumer Price Index (CPI)</p>
+                      <p className="text-3xl font-bold mt-1">
+                        {formatNumber(reportData.cpi, 2)}
+                      </p>
+                    </div>
+                    <div className="rounded-full bg-white/10 p-3">
+                      <FileText className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-blue-200 mt-3">
+                    Base: {getMonthName(reportData.base_month)} {reportData.base_year} = 100
+                  </p>
+                </div>
+
+                <div className="rounded-lg border bg-gradient-to-br from-emerald-600 to-emerald-700 p-6 text-white shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-emerald-100">Laspeyres Index</p>
+                      <p className="text-3xl font-bold mt-1">
+                        {formatNumber(reportData.laspeyres, 4)}
+                      </p>
+                    </div>
+                    <div className="rounded-full bg-white/10 p-3">
+                      <FileText className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-emerald-200 mt-3">
+                    Weighted price index using base period quantities
+                  </p>
                 </div>
               </div>
 

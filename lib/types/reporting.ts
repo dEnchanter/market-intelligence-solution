@@ -84,6 +84,8 @@ export interface CPIReportData {
   scope: string;
   items: CPIReportItem[];
   groups: CPIReportGroup[];
+  laspeyres: number;
+  cpi: number;
 }
 
 // CPI Report response

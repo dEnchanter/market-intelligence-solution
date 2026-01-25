@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { isAuthenticated, getUser } from "@/lib/utils/auth";
 
@@ -11,6 +11,8 @@ interface AuthGuardProps {
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -25,17 +27,20 @@ export function AuthGuard({ children }: AuthGuardProps) {
     if (user?.must_change_password && pathname !== "/change-password") {
       // Redirect to change password page if not already there
       router.push("/change-password");
+      return;
     }
+
+    setIsAuthorized(true);
+    setIsLoading(false);
   }, [router, pathname]);
 
-  // Only render children if authenticated
-  if (!isAuthenticated()) {
+  // Show nothing while checking auth (consistent on server and client)
+  if (isLoading) {
     return null;
   }
 
-  // If user must change password and not on change-password page, don't render
-  const user = getUser();
-  if (user?.must_change_password && pathname !== "/change-password") {
+  // Only render children if authorized
+  if (!isAuthorized) {
     return null;
   }
 

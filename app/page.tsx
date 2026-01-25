@@ -221,7 +221,7 @@ export default function Home() {
             {/* Footer */}
             <div className="mt-4 text-center animate-fadeInUp delay-800">
               <p className="text-xs sm:text-sm text-gray-600 font-medium">
-                Powered By Brs Limited © 2025
+                Powered By BRA Limited © 2025
               </p>
             </div>
           </div>
