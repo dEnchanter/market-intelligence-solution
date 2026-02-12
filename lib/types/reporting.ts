@@ -33,6 +33,7 @@ export interface CPIReportRequest {
   weight_year: number;
   state_id?: string;
   senatorial_district_id?: string;
+  market_type?: "rural" | "urban";
 }
 
 // CPI Report market relative

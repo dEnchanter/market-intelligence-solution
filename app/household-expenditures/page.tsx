@@ -15,6 +15,7 @@ import { ExpenditureListFilters } from "@/lib/types/household-expenditures";
 import { exportExpendituresToCSV } from "@/lib/utils/export";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -397,6 +398,26 @@ export default function HouseholdExpendituresPage() {
                         )}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  {/* Exclude Policy Items Filter */}
+                  <div className="flex items-center space-x-2 pt-8">
+                    <Checkbox
+                      id="exclude-policy-items"
+                      checked={tempFilters.exclude_policy_items || false}
+                      onCheckedChange={(checked) =>
+                        setTempFilters({
+                          ...tempFilters,
+                          exclude_policy_items: checked === true ? true : undefined,
+                        })
+                      }
+                    />
+                    <label
+                      htmlFor="exclude-policy-items"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      Exclude Policy Items
+                    </label>
                   </div>
                 </div>
 

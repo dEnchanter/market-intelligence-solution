@@ -76,6 +76,7 @@ export interface ExpenditureListFilters {
   district_id?: string;
   town?: string;
   added_by_id?: string;
+  exclude_policy_items?: boolean;
 }
 
 // Stats filters

@@ -33,6 +33,7 @@ interface FormData {
   scope: string;
   state_id: string;
   senatorial_district_id: string;
+  market_type: string;
 }
 
 export default function CPIReportPage() {
@@ -47,6 +48,7 @@ export default function CPIReportPage() {
     scope: "ALL",
     state_id: "",
     senatorial_district_id: "",
+    market_type: "",
   });
 
   const [reportData, setReportData] = useState<CPIReportData | null>(null);
@@ -99,6 +101,11 @@ export default function CPIReportPage() {
       payload.state_id = formData.state_id;
     } else if (formData.scope === "SENATORIAL_DISTRICT" && formData.senatorial_district_id) {
       payload.senatorial_district_id = formData.senatorial_district_id;
+    }
+
+    // Add market type if selected
+    if (formData.market_type) {
+      payload.market_type = formData.market_type;
     }
 
     try {
@@ -494,6 +501,30 @@ export default function CPIReportPage() {
                             {option.label}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Market Type (Optional)
+                    </label>
+                    <Select
+                      value={formData.market_type || "none"}
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          market_type: value === "none" ? "" : value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select market type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">All Markets</SelectItem>
+                        <SelectItem value="rural">Rural</SelectItem>
+                        <SelectItem value="urban">Urban</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
