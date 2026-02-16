@@ -98,6 +98,7 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
               />
             </TableHead>
             <TableHead className="px-4">Household Name</TableHead>
+            <TableHead className="px-4">Type</TableHead>
             <TableHead className="px-4">Contact Info</TableHead>
             <TableHead className="px-4">LGA</TableHead>
             <TableHead className="px-4">Town</TableHead>
@@ -117,6 +118,11 @@ export function HouseholdsTable({ households }: HouseholdsTableProps) {
               </TableCell>
               <TableCell className="font-medium px-4">
                 {household.household_name}
+              </TableCell>
+              <TableCell className="px-4">
+                <Badge variant="outline" className="font-normal text-gray-500">
+                  {household.type || "N/A"}
+                </Badge>
               </TableCell>
               <TableCell className="px-4">
                 {household.contact_name}
