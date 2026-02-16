@@ -23,12 +23,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const updateHouseholdSchema = z.object({
   household_name: z.string().min(1, "Household name is required"),
   contact_name: z.string().min(1, "Contact name is required"),
   contact_phone: z.string().min(1, "Contact phone is required"),
   town: z.string().min(1, "Town is required"),
+  type: z.string().optional(),
 });
 
 type UpdateHouseholdFormValues = z.infer<typeof updateHouseholdSchema>;
@@ -53,6 +61,7 @@ export function EditHouseholdDialog({
       contact_name: household.contact_name || "",
       contact_phone: household.contact_phone || "",
       town: household.town || "",
+      type: household.type || "",
     },
   });
 
@@ -63,6 +72,7 @@ export function EditHouseholdDialog({
       contact_name: household.contact_name || "",
       contact_phone: household.contact_phone || "",
       town: household.town || "",
+      type: household.type || "",
     });
   }, [household, form]);
 
@@ -149,6 +159,28 @@ export function EditHouseholdDialog({
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="rural">Rural</SelectItem>
+                      <SelectItem value="urban">Urban</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="flex justify-end gap-3 pt-4">
               <Button

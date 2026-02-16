@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useMemo } from "react";
@@ -400,24 +401,51 @@ export default function HouseholdExpendituresPage() {
                     </Select>
                   </div>
 
-                  {/* Exclude Policy Items Filter */}
-                  <div className="flex items-center space-x-2 pt-8">
-                    <Checkbox
-                      id="exclude-policy-items"
-                      checked={tempFilters.exclude_policy_items || false}
-                      onCheckedChange={(checked) =>
+                  {/* Type Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Type
+                    </label>
+                    <Select
+                      value={tempFilters.type || "all"}
+                      onValueChange={(value) =>
                         setTempFilters({
                           ...tempFilters,
-                          exclude_policy_items: checked === true ? true : undefined,
+                          type: value === "all" ? undefined : value,
                         })
                       }
-                    />
-                    <label
-                      htmlFor="exclude-policy-items"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
-                      Exclude Policy Items
-                    </label>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="All types" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All types</SelectItem>
+                        <SelectItem value="rural">Rural</SelectItem>
+                        <SelectItem value="urban">Urban</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Exclude Policy Items Filter */}
+                  <div className="border rounded-md p-4 bg-gray-50">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="exclude-policy-items"
+                        checked={tempFilters.exclude_policy_items || false}
+                        onCheckedChange={(checked) =>
+                          setTempFilters({
+                            ...tempFilters,
+                            exclude_policy_items: checked === true ? true : undefined,
+                          })
+                        }
+                      />
+                      <label
+                        htmlFor="exclude-policy-items"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Exclude Policy Items
+                      </label>
+                    </div>
                   </div>
                 </div>
 

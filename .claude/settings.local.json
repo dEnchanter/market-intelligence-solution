@@ -23,7 +23,8 @@
       "Bash(rm:*)",
       "Bash(npm run build:*)",
       "Bash(git remote set-url:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

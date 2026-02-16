@@ -19,6 +19,7 @@ export interface Household {
   town: string;
   lga: string;
   district_id: string;
+  type?: string;
   location: Location;
   address: string;
   added_by?: AddedBy;
@@ -57,6 +58,7 @@ export interface UpdateHouseholdRequest {
   contact_phone?: string;
   household_name?: string;
   town?: string;
+  type?: string;
 }
 
 // Response types
