@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AppLayout } from "@/components/app-layout";
 import { MaxWidthWrapper } from "@/components/utils/max-width-wrapper";
 import { useStatsSummary } from "@/hooks/use-stats";
@@ -60,7 +61,7 @@ export default function DashboardPage() {
             <>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4">
                 {/* Districts */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/districts" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-purple-100 p-2.5 md:p-3">
                       <Building2 className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
@@ -72,10 +73,10 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Markets */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/markets" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-blue-100 p-2.5 md:p-3">
                       <Store className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
@@ -87,10 +88,10 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Item Groups */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/consumption-items" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-green-100 p-2.5 md:p-3">
                       <List className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
@@ -102,10 +103,10 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Items */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/consumption-items" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-teal-100 p-2.5 md:p-3">
                       <Package className="h-5 w-5 md:h-6 md:w-6 text-teal-600" />
@@ -117,10 +118,10 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Households */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/households" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-orange-100 p-2.5 md:p-3">
                       <Home className="h-5 w-5 md:h-6 md:w-6 text-orange-600" />
@@ -132,10 +133,10 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Household Items */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/household-items" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-pink-100 p-2.5 md:p-3">
                       <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-pink-600" />
@@ -147,10 +148,10 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 {/* Field Users */}
-                <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/users" className="rounded-lg border bg-white p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-indigo-100 p-2.5 md:p-3">
                       <Users className="h-5 w-5 md:h-6 md:w-6 text-indigo-600" />
@@ -162,7 +163,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
 
               {/* Filters Section */}
